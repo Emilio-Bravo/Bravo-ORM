@@ -25,4 +25,12 @@ class DataHandler
     {
         return $this->value->fetch(PDO::FETCH_NUM);
     }
+    public function assoc()
+    {
+        return $this->value->fetch(PDO::FETCH_ASSOC);
+    }
+    public function json()
+    {
+        return json_encode($this->value);
+    }
 }

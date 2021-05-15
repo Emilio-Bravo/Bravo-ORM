@@ -4,8 +4,7 @@ require_once './vendor/autoload.php';
 
 use Bravo\ORM\Query;
 
-$query = new Query();
-$query->attributes = ['question_title', 'correct_a'];
-$query->table = "questions";
-$result = $query->select()->all()->obj();
-echo $result->correct_a;
+$query = new Query;
+$query->table = 'users';
+$result = $query->select(['password'])->where('email')->like('emilio@gmail.com')->all()->obj();
+echo $result->password;

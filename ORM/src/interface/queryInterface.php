@@ -6,9 +6,9 @@ interface QueryInterface
 {
     public function table();
     public function selectAll();
-    public function insert();
+    public function insert(array $values);
     public function update();
-    public function query($query, $values = null);
+    public function query($query, array $values = null);
     public function where($condition);
-    public function select();
+    public function select(array $columns = null);
 }

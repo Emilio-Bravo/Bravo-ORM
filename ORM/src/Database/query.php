@@ -4,13 +4,13 @@ namespace Bravo\ORM;
 
 use Bravo\ORM\QueryInterface;
 use Bravo\ORM\QueryHandler;
-use PDO;
 
 class Query implements QueryInterface
 {
     protected $QueryHandler;
     protected $DataHandler;
     protected $query;
+    protected $params;
     protected $connection;
     protected $smtp;
     public $table;
@@ -40,27 +40,45 @@ class Query implements QueryInterface
     public function selectAll()
     {
     }
-    public function insert()
+    public function insert(array $values)
     {
+        $this->query = "INSERT INTO $this->table VALUES(?)";
     }
     public function update()
     {
-        echo "Hola mundo";
     }
-    public function query($query, $values = null)
+    public function query($query, array $values = null)
     {
         if (!$this->connection) return;
         $this->smtp = $this->connection->prepare($query);
         $this->smtp->execute($values);
         return $this->QueryHandler->is_void($this->smtp) ? new DataNotFoundException :  new DataHandler($this->smtp);
     }
-    public function where($condition)
+    public function where($value)
     {
-        $this->query .= $condition;
+        $this->query .= " WHERE $value";
         return $this;
     }
-    public function select()
+    public function like($value)
     {
+        $this->query .= " LIKE ?";
+        $this->params[] = $value;
+        return $this;
+    }
+    public function equal($value)
+    {
+        $this->query .= " = ?";
+        $this->params[] = $value;
+        return $this;
+    }
+    public function and($column)
+    {
+        $this->query .= " AND $column";
+        return $this;
+    }
+    public function select(array $columns = null)
+    {
+        $this->attributes = $columns;
         $this->query = "SELECT ";
         $this->query .= is_array($this->attributes) ? implode(', ', $this->attributes) : "* ";
         $this->query .= " FROM $this->table";
@@ -68,7 +86,7 @@ class Query implements QueryInterface
     }
     public function all()
     {
-        return $this->query($this->query);
+        return $this->query($this->query, $this->params ?? null);
     }
     public function is_connected()
     {

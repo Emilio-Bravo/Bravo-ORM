@@ -125,7 +125,4 @@ class DB extends PDO
     {
         return "$this->driver:$this->sqlitePath";
     }
-    /**
-     * Fecthes data into an object
-     */
 }
