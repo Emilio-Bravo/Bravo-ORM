@@ -1,0 +1,22 @@
+{
+  "name": "emilio-bravo/bravo-orm",
+  "authors": [
+    {
+      "name": "Emilio Bravo",
+      "email": "hsardrake@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.5"
+  },
+  "autoload": {
+    "classmap": [
+      "src/",
+      "src/env/"
+    ],
+    "psr-4": {
+      "Bravo\\ORM\\": "src/",
+      "Bravo\\ORM\\ENV\\": "src/env/"
+    }
+  }
+}
