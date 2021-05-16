@@ -11,8 +11,11 @@ return array(
     'Bravo\\ORM\\DataNotFoundException' => $baseDir . '/src/exceptions/dataNotFoundException.php',
     'Bravo\\ORM\\ENV\\DatabseEnv' => $baseDir . '/src/env/DatabaseEnv.php',
     'Bravo\\ORM\\ExceptionInterface' => $baseDir . '/src/interface/ExceptionInterface.php',
-    'Bravo\\ORM\\Query' => $baseDir . '/src/Database/Query.php',
+    'Bravo\\ORM\\Model' => $baseDir . '/src/test/model.php',
+    'Bravo\\ORM\\Query' => $baseDir . '/src/Database/query.php',
     'Bravo\\ORM\\QueryHandler' => $baseDir . '/src/Database/queryHanlder.php',
     'Bravo\\ORM\\QueryInterface' => $baseDir . '/src/interface/queryInterface.php',
+    'Bravo\\ORM\\inputSanitizer' => $baseDir . '/src/helpers/inputSanitizer.php',
+    'Bravo\\ORM\\noConnectionException' => $baseDir . '/src/exceptions/noConnectionException.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
 );

@@ -29,6 +29,10 @@ class DataHandler
     {
         return $this->value->fetch(PDO::FETCH_ASSOC);
     }
+    public function count()
+    {
+        return $this->value->rowCount();
+    }
     public function json()
     {
         return json_encode($this->value);

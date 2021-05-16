@@ -2,9 +2,7 @@
 
 require_once './vendor/autoload.php';
 
-use Bravo\ORM\Query;
+use Bravo\ORM\Model;
 
-$query = new Query;
-$query->table = 'users';
-$result = $query->select(['password'])->where('email')->like('emilio@gmail.com')->all()->obj();
-echo $result->password;
+$result = Model::find(['name' => 'Emilio'])->obj();
+echo $result->email;

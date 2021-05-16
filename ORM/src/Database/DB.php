@@ -25,7 +25,7 @@ class DB extends PDO
     private $errorMode;
 
     /** 
-     * Set's the database enviroment
+     * Sets the database enviroment
      * @return void
      */
 
@@ -44,7 +44,7 @@ class DB extends PDO
     }
 
     /**
-     * Set's the database 
+     * Sets the database 
      * @return void
      */
 
@@ -59,7 +59,7 @@ class DB extends PDO
     }
 
     /**
-     * Set's the database driver
+     * Sets the database driver
      */
 
     public function setDriver()
@@ -77,7 +77,7 @@ class DB extends PDO
         }
     }
     /**
-     * Set's the database error mode
+     * Sets the database error mode
      * @return void
      */
 

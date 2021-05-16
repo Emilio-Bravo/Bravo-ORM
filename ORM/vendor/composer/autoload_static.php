@@ -31,9 +31,12 @@ class ComposerStaticInitc0f2a37ca4e253441be05f72c4717e0e
         'Bravo\\ORM\\DataNotFoundException' => __DIR__ . '/../..' . '/src/exceptions/dataNotFoundException.php',
         'Bravo\\ORM\\ENV\\DatabseEnv' => __DIR__ . '/../..' . '/src/env/DatabaseEnv.php',
         'Bravo\\ORM\\ExceptionInterface' => __DIR__ . '/../..' . '/src/interface/ExceptionInterface.php',
-        'Bravo\\ORM\\Query' => __DIR__ . '/../..' . '/src/Database/Query.php',
+        'Bravo\\ORM\\Model' => __DIR__ . '/../..' . '/src/test/model.php',
+        'Bravo\\ORM\\Query' => __DIR__ . '/../..' . '/src/Database/query.php',
         'Bravo\\ORM\\QueryHandler' => __DIR__ . '/../..' . '/src/Database/queryHanlder.php',
         'Bravo\\ORM\\QueryInterface' => __DIR__ . '/../..' . '/src/interface/queryInterface.php',
+        'Bravo\\ORM\\inputSanitizer' => __DIR__ . '/../..' . '/src/helpers/inputSanitizer.php',
+        'Bravo\\ORM\\noConnectionException' => __DIR__ . '/../..' . '/src/exceptions/noConnectionException.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
     );
 

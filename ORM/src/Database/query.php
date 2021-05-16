@@ -4,92 +4,318 @@ namespace Bravo\ORM;
 
 use Bravo\ORM\QueryInterface;
 use Bravo\ORM\QueryHandler;
+use Bravo\ORM\inputSanitizer;
+
+/**
+ * This class is in charge of making the queries to the database
+ * @author Emilio Bravo
+ */
 
 class Query implements QueryInterface
 {
-    protected $QueryHandler;
-    protected $DataHandler;
-    protected $query;
-    protected $params;
-    protected $connection;
-    protected $smtp;
-    public $table;
-    public $attributes = null;
 
     /**
-     * Performs the databse connection
-     * @return \Src\Database\DB
+     * Handles the query data
      */
-    public function connect()
-    {
-        $this->connection = new DB;
-    }
-    public function initQueryHanlder()
-    {
-        $this->QueryHandler = new QueryHandler;
-    }
+    protected $QueryHandler;
+    /**
+     * Used to keep the parameters to be passed in an statement
+     */
+    protected $paramValues = [];
+    /**
+     * Can be used to set the placeholders of an statement
+     */
+    protected $BindedParam;
+    /**
+     * Used to keep the SQL statment that will be used
+     */
+    protected $query;
+    /**
+     * Determines wether hasPendingQuery method can be used or not
+     */
+    protected $pendingQuery = false;
+    /**
+     * Result of a PDO (prepare) method
+     * This property is used for performing the query
+     */
+    protected $stmt;
+    /**
+     * Represents the database connection
+     */
+    protected $connection;
+    /**
+     * The table to be used
+     */
+    public $table;
+
+    /**
+     * Performs the databse connection and the class settings
+     */
+
     public function __construct()
     {
         $this->connection = new DB;
         $this->QueryHandler = new QueryHandler;
-        $this->DataHandler = new DataHandler;
     }
-    public function table()
+
+    /**
+     * Sets the table name
+     * @return this
+     */
+
+    public function __invoke($table)
     {
+        $this->table = $table;
+        return $this;
     }
-    public function selectAll()
-    {
-    }
+
+    /**
+     * Performs an INSERT statement into the database
+     * @param array $values Values to insert
+     */
+
     public function insert(array $values)
     {
-        $this->query = "INSERT INTO $this->table VALUES(?)";
+        $this->query = "INSERT INTO $this->table ";
+        if ($this->is_assoc($values)) $this->setColumns($values);
+        $this->setValues($values);
+        return $this;
     }
-    public function update()
+
+    /**
+     * Sets an UPDATE statement and activates the pendingQuery property
+     * @param array $column_value Needs to be an associative array in wich selected columns will bind a value Example: ['name' => 'John']
+     */
+
+    public function update(array $values)
     {
+        $this->query = "UPDATE $this->table SET ";
+        array_map(fn ($key, $value) => $this->bindValues($key, $value), array_keys($values), $values);
+        $this->query = inputSanitizer::santizeLastCharacter($this->query);
+        return $this;
     }
-    public function query($query, array $values = null)
+
+    /**
+     * Sets a DELETE statement and activates the pendingQuery property
+     * @return this
+     */
+
+    public function delete()
+    {
+        $this->query = "DELETE FROM $this->table";
+        return $this;
+    }
+
+    /**
+     * Prepares and executes a query stored in the query property
+     * @param array $values [optional] If provided as an array, the execute statement will pass the array in the query
+     * @return object DataHandler in case of success or an Exception in case of an issue 
+     */
+
+    private function queryExec(array $values = null)
     {
         if (!$this->connection) return;
-        $this->smtp = $this->connection->prepare($query);
-        $this->smtp->execute($values);
-        return $this->QueryHandler->is_void($this->smtp) ? new DataNotFoundException :  new DataHandler($this->smtp);
+        $this->stmt = $this->connection->prepare($this->query);
+        $this->stmt->execute($values);
+        return $this->QueryHandler->is_void($this->stmt) ? new DataNotFoundException :  new DataHandler($this->stmt);
     }
+
+    /**
+     * Adds a WHERE statement to the current query
+     * @param mixed $value Value to be compared
+     * @return this
+     */
+
     public function where($value)
     {
         $this->query .= " WHERE $value";
+        $this->pendingQuery = true;
         return $this;
     }
+
+    /**
+     * Adds a LIKE statement to the current query, which must have a WHERE statement beforehand
+     * In case pendientQuery is active, hasPendingQuery method would be called
+     * @param mixed $value Value to be compared
+     * @return this
+     */
+
     public function like($value)
     {
         $this->query .= " LIKE ?";
-        $this->params[] = $value;
+        if ($this->pendingQuery)  array_push($this->paramValues, $value);
         return $this;
     }
+
+    /**
+     * Adds a value comparison to the current query, which must have a WHERE statement beforehand
+     * In case pendientQuery is active, hasPendingQuery method would be called
+     * @param mixed $value Value to be compared
+     * @return this
+     */
+
     public function equal($value)
     {
         $this->query .= " = ?";
-        $this->params[] = $value;
+        if ($this->pendingQuery)  array_push($this->paramValues, $value);
         return $this;
     }
-    public function and($column)
+
+    /**
+     * Adds a (key - value) comparison to the current query, which must have a WHERE statement beforehand
+     * @param mixed $key Key to ve compared with a value
+     * @param mixed $value Value to be compared
+     * @return this
+     */
+
+    public function bindValues($key, $value)
     {
-        $this->query .= " AND $column";
+        $this->query .= " $key = ?,";
+        array_push($this->paramValues, $value);
         return $this;
     }
+
+    /**
+     * Alows to have mutliple comparisons to in urrent query if necesary
+     * @param mixed $value Value to be compared
+     * @return this
+     */
+
+    public function multipleComparisons(array $keys_and_values)
+    {
+        $this->where(key($keys_and_values))->equal(array_values($keys_and_values)[0]);
+        array_shift($keys_and_values);
+        array_map(fn ($key, $value) => $this->and($key)->equal($value), array_keys($keys_and_values), $keys_and_values);
+        return $this;
+    }
+    /**
+     * Adds an AND statement to the current query, which must have a WHERE statement beforehand
+     * this method will allow to have two or more comparisons depending on how many times it is used in the current query
+     * @param mixed $value Value to be compared
+     * @return this 
+     */
+
+    public function and($value)
+    {
+        $this->query .= " AND $value";
+        return $this;
+    }
+
+    /**
+     * Adds or performs a SELECT statement to the current query
+     * @param array columns [optional] If provided the statment will apply to the specified columns
+     * @return this
+     */
+
     public function select(array $columns = null)
     {
-        $this->attributes = $columns;
         $this->query = "SELECT ";
-        $this->query .= is_array($this->attributes) ? implode(', ', $this->attributes) : "* ";
+        $this->query .= is_array($columns) ? implode(', ', $columns) : "*";
         $this->query .= " FROM $this->table";
         return $this;
     }
+
+    /**
+     * Finds one or more register with the especified values
+     * @param array $column_value ['name' => 'John', 'email' => 'john@mail.com']
+     */
+
+    public function find(array $column_value)
+    {
+        $this->select();
+        $this->where(key($column_value))->equal(array_values($column_value)[0]);
+        if (count($column_value) > 1) {
+            array_shift($column_value);
+            array_map(fn ($value, $key) => $this->and($key)->equal($value), $column_value, array_keys($column_value));
+        }
+        return $this;
+    }
+
+    /**
+     * Sets the values for an INSERT statetment
+     * @return this
+     */
+
+    public function setValues(array $values)
+    {
+        array_map(fn ($value) => $this->paramValues[] = $value, $values);
+        array_map(fn () => $this->BindedParam[] = '?', $this->paramValues);
+        $this->query .= " VALUES" . "(" . implode(",", $this->BindedParam) . ")";
+        return $this;
+    }
+
+    /**
+     * Sets the columns to be affected in an statement
+     * @return this
+     */
+
+    public function setColumns(array $values)
+    {
+        $this->query .= "(" . implode(',', array_keys($values)) . ")";
+        return $this;
+    }
+    /**
+     * In case that pendingQuery has been activated (equals to true) this method will execute
+     */
+
+    public function hasPendingQuery()
+    {
+        return $this->queryExec(empty($this->paramValues) ? null : $this->paramValues);
+    }
+
+    /**
+     * Gets all the results of the SELECT statement if executed
+     * @return object
+     */
+
     public function all()
     {
-        return $this->query($this->query, $this->params ?? null);
+        if ($this->pendingQuery) return $this->hasPendingQuery();
+        return $this->queryExec($this->paramValues ?? null);
     }
+
+    /**
+     * Sets a limit of results in the SELECT statement
+     * @return object
+     */
+
+    public function limit(int $amount)
+    {
+        $this->query .= " LIMIT $amount";
+        if ($this->pendingQuery) return $this->hasPendingQuery();
+        return $this->queryExec($this->paramValues ?? null);
+    }
+
+    /**
+     * Performs a query into the databse
+     * @return object
+     */
+
+    public function execute()
+    {
+        return $this->queryExec(empty($this->paramValues) ? null : $this->paramValues);
+    }
+
+    /**
+     * Verifies if a valid database connection exists
+     * @return bool
+     */
+
     public function is_connected()
     {
-        return $this->DB;
+        if (!$this->DB) {
+            throw new noConnectionException;
+            return false;
+        }
+    }
+
+    /**
+     * Deternmines wether an array key is associative or not
+     * @return bool
+     */
+
+    public function is_assoc(array $array)
+    {
+        return !is_int(key($array));
     }
 }
