@@ -25,6 +25,12 @@ class BravoORM
         self::init();
         return self::$query->select($columns)->limit($limit);
     }
+   
+    public static function select(array $columns = null, array $tables = null, $orderBy = "id DESC")
+    {
+        self::init();
+        return self::$query->select($columns,$tables)->orderBy($orderBy)->execute();
+    }
 
     public static function create(array $data)
     {
