@@ -189,7 +189,7 @@ class Query implements QueryInterface
     }
 
     /**
-     * Alows to have mutliple comparisons to in urrent query if necesary
+     * Allows to have mutliple comparisons to in urrent query if necesary
      * @param bool $strict [optional] Wheter the query is strict or not while searching results
      * @return this
      */
@@ -221,11 +221,12 @@ class Query implements QueryInterface
      * @return this
      */
 
-    public function select(array $columns = null)
+    public function select(array $columns = null, array $tables = null)
     {
         $this->query = "SELECT ";
-        $this->query .= is_array($columns) ? implode(', ', $columns) : "*";
-        $this->query .= " FROM $this->table";
+        $this->query .= is_array($columns) ? $this->toTarget($columns) : "*";
+        $this->query .= " FROM ";
+        $this->query .= is_array($tables) ? $this->toTarget($tables) : $this->table;
         return $this;
     }
 
@@ -251,7 +252,7 @@ class Query implements QueryInterface
     {
         array_map(fn ($value) => $this->paramValues[] = $value, $values);
         array_map(fn () => $this->BindedParam[] = '?', $this->paramValues);
-        $this->query .= " VALUES" . "(" . implode(",", $this->BindedParam) . ")";
+        $this->query .= " VALUES" . "(" . $this->toTarget($this->BindedParam) . ")";
         return $this;
     }
 
@@ -262,7 +263,7 @@ class Query implements QueryInterface
 
     public function setColumns(array $values)
     {
-        $this->query .= "(" . implode(',', array_keys($values)) . ")";
+        $this->query .= "(" . $this->toTarget(array_keys($values)) . ")";
         return $this;
     }
     /**
@@ -298,6 +299,24 @@ class Query implements QueryInterface
     }
 
     /**
+     * Adds an ORDER BY statement to the current query
+     * @param string $order
+     * @return this
+     */
+
+    public function orderBy($order)
+    {
+        $this->query .= " ORDER BY $order";
+        return $this;
+    }
+
+    public function by($order)
+    {
+        $this->query .= " $order";
+        return $this;
+    }
+
+    /**
      * Performs a query into the databse
      * @return object
      */
@@ -328,5 +347,16 @@ class Query implements QueryInterface
     public function is_assoc(array $array)
     {
         return !is_int(key($array));
+    }
+
+    /**
+     * Organizes the data to be passed in the statement divided by commas
+     * @param array $values
+     * @return string
+     */
+
+    public function toTarget(array $values)
+    {
+        return implode(',', $values);
     }
 }
