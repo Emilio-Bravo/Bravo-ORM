@@ -117,7 +117,7 @@ class Query implements QueryInterface
         if (!$this->connection) return;
         $this->stmt = $this->connection->prepare($this->query);
         $this->stmt->execute($values);
-        return $this->QueryHandler->is_void($this->stmt) ? new DataNotFoundException :  new DataHandler($this->stmt);
+        return $this->QueryHandler->is_void($this->stmt) ? new statementException :  new DataHandler($this->stmt);
     }
 
     /**
@@ -144,6 +144,19 @@ class Query implements QueryInterface
     {
         $this->query .= " LIKE ?";
         if ($this->pendingQuery)  array_push($this->paramValues, $value);
+        return $this;
+    }
+
+    /**
+     * Adds a LIKE statement to the current query and also adds lower level of stricness in the query, which must have a WHERE statement beforehand
+     * @param mixed $value Value to be compared
+     * @return this
+     */
+
+    public function beLike($value)
+    {
+        $this->query .= " LIKE ?";
+        if ($this->pendingQuery)  array_push($this->paramValues, "%$value%");
         return $this;
     }
 
@@ -177,15 +190,16 @@ class Query implements QueryInterface
 
     /**
      * Alows to have mutliple comparisons to in urrent query if necesary
-     * @param mixed $value Value to be compared
+     * @param bool $strict [optional] Wheter the query is strict or not while searching results
      * @return this
      */
 
-    public function multipleComparisons(array $keys_and_values)
+    public function multipleComparisons(array $keys_and_values, bool $strict = true)
     {
-        $this->where(key($keys_and_values))->equal(array_values($keys_and_values)[0]);
+        $this->where(key($keys_and_values));
+        $strict ? $this->equal(array_values($keys_and_values)[0]) : $this->beLike(array_values($keys_and_values)[0]);
         array_shift($keys_and_values);
-        array_map(fn ($key, $value) => $this->and($key)->equal($value), array_keys($keys_and_values), $keys_and_values);
+        array_map(fn ($key, $value) => $strict ? $this->and($key)->equal($value) : $this->and($key)->beLike($value), array_keys($keys_and_values), $keys_and_values);
         return $this;
     }
     /**
@@ -218,16 +232,13 @@ class Query implements QueryInterface
     /**
      * Finds one or more register with the especified values
      * @param array $column_value ['name' => 'John', 'email' => 'john@mail.com']
+     * @param bool $strict [optional] Wheter the query is strict or not while searching results
+     * @return this
      */
 
-    public function find(array $column_value)
+    public function find(array $column_value, $strict = true)
     {
-        $this->select();
-        $this->where(key($column_value))->equal(array_values($column_value)[0]);
-        if (count($column_value) > 1) {
-            array_shift($column_value);
-            array_map(fn ($value, $key) => $this->and($key)->equal($value), $column_value, array_keys($column_value));
-        }
+        $this->select()->multipleComparisons($column_value, $strict);
         return $this;
     }
 
@@ -303,7 +314,7 @@ class Query implements QueryInterface
 
     public function is_connected()
     {
-        if (!$this->DB) {
+        if (!$this->connection) {
             throw new noConnectionException;
             return false;
         }

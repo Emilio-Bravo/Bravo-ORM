@@ -35,6 +35,14 @@ class DataHandler
     }
     public function json()
     {
-        return json_encode($this->value);
+        return json_encode($this->assoc());
+    }
+    public function deserializable()
+    {
+        return $this->value->fetch(PDO::FETCH_SERIALIZE);
+    }
+    public function serializable()
+    {
+        return serialize($this->assoc());
     }
 }
