@@ -189,7 +189,7 @@ class Query implements QueryInterface
     }
 
     /**
-     * Allows to have mutliple comparisons to in urrent query if necesary
+     * Allows to have mutliple comparisons to in current query if necesary
      * @param bool $strict [optional] Wheter the query is strict or not while searching results
      * @return this
      */
@@ -202,6 +202,22 @@ class Query implements QueryInterface
         array_map(fn ($key, $value) => $strict ? $this->and($key)->equal($value) : $this->and($key)->beLike($value), array_keys($keys_and_values), $keys_and_values);
         return $this;
     }
+
+    /**
+     * Allows to have mutliple cases comparisons to in current query if necesary
+     * @param bool $strict [optional] Wheter the query is strict or not while searching results
+     * @return this
+     */
+
+    public function multipleCases(array $keys_and_values, bool $strict = true)
+    {
+        $this->where(key($keys_and_values));
+        $strict ? $this->equal(array_values($keys_and_values)[0]) : $this->beLike(array_values($keys_and_values)[0]);
+        array_shift($keys_and_values);
+        array_map(fn ($key, $value) => $strict ? $this->or($key)->equal($value) : $this->or($key)->beLike($value), array_keys($keys_and_values), $keys_and_values);
+        return $this;
+    }
+
     /**
      * Adds an AND statement to the current query, which must have a WHERE statement beforehand
      * this method will allow to have two or more comparisons depending on how many times it is used in the current query
@@ -215,6 +231,18 @@ class Query implements QueryInterface
         return $this;
     }
 
+    /**
+     * Adds an OR statement to the current query, which must have a WHERE statement beforehand
+     * this method will allow to have two or more different comparisons depending on how many times it is used in the current query
+     * @param mixed $value Value to be compared
+     * @return this 
+     */
+
+    public function or($value)
+    {
+        $this->query .= " OR $value";
+        return $this;
+    }
     /**
      * Adds or performs a SELECT statement to the current query
      * @param array columns [optional] If provided the statment will apply to the specified columns
@@ -237,9 +265,23 @@ class Query implements QueryInterface
      * @return this
      */
 
-    public function find(array $column_value, $strict = true)
+    public function find(array $column_value, array $columns = null, array $tables = null, $strict = true)
     {
-        $this->select()->multipleComparisons($column_value, $strict);
+        $this->select($columns, $tables)->multipleComparisons($column_value, $strict);
+        return $this;
+    }
+
+    
+    /**
+     * Finds one or more register with the especified values evaluating different cases
+     * @param array $column_value ['name' => 'John', 'email' => 'john@mail.com']
+     * @param bool $strict [optional] Wheter the query is strict or not while searching results
+     * @return this
+     */
+
+    public function findOrFail(array $column_value, array $columns = null, array $tables = null, bool $strict = true)
+    {
+        $this->select($columns, $tables)->multipleCases($column_value, $strict);
         return $this;
     }
 
