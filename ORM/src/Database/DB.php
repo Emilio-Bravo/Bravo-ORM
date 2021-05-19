@@ -67,13 +67,10 @@ class DB extends PDO
         switch ($this->driver) {
             case 'psql' || 'postgres':
                 return parent::__construct($this->postgreSqlConnection());
-                break;
             case 'mysql':
                 return parent::__construct($this->mysqlConnection(), $this->user, $this->password, $this->errorMode);
-                break;
             case 'sqlite':
                 return parent::__construct($this->sqliteConnection(), $this->errorMode);
-                break;
         }
     }
     /**
