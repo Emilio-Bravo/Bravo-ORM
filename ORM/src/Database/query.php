@@ -352,12 +352,6 @@ class Query implements QueryInterface
         return $this;
     }
 
-    public function by($order)
-    {
-        $this->query .= " $order";
-        return $this;
-    }
-
     /**
      * Performs a query into the databse
      * @return object
