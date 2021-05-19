@@ -114,7 +114,7 @@ class Query implements QueryInterface
 
     private function queryExec(array $values = null)
     {
-        if (!$this->connection) return;
+        if (!$this->is_connected()) return;
         $this->stmt = $this->connection->prepare($this->query);
         $this->stmt->execute($values);
         return $this->QueryHandler->is_void($this->stmt) ? new statementException :  new DataHandler($this->stmt);
@@ -245,7 +245,7 @@ class Query implements QueryInterface
     }
     /**
      * Adds or performs a SELECT statement to the current query
-     * @param array columns [optional] If provided the statment will apply to the specified columns
+     * @param array $columns [optional] If provided the statment will apply to the specified columns
      * @return this
      */
 
