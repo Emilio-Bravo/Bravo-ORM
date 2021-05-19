@@ -373,6 +373,7 @@ class Query implements QueryInterface
             throw new noConnectionException;
             return false;
         }
+        return true;
     }
 
     /**
