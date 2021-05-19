@@ -114,7 +114,7 @@ class Query implements QueryInterface
 
     private function queryExec(array $values = null)
     {
-        if (!$this->is_connected()) return;
+        if (!$this->is_connected())  throw new noConnectionException;
         $this->stmt = $this->connection->prepare($this->query);
         $this->stmt->execute($values);
         return $this->QueryHandler->is_void($this->stmt) ? new statementException :  new DataHandler($this->stmt);
@@ -271,7 +271,7 @@ class Query implements QueryInterface
         return $this;
     }
 
-    
+
     /**
      * Finds one or more register with the especified values evaluating different cases
      * @param array $column_value ['name' => 'John', 'email' => 'john@mail.com']
@@ -369,11 +369,7 @@ class Query implements QueryInterface
 
     public function is_connected()
     {
-        if (!$this->connection) {
-            throw new noConnectionException;
-            return false;
-        }
-        return true;
+        if (!$this->connection) return false;
     }
 
     /**
