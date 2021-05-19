@@ -7,7 +7,7 @@ use Bravo\ORM\Query;
 class BravoORM
 {
     private static $query;
-    public static $table = 'users';
+    public static $table;
 
     public static function table(string $table)
     {
@@ -25,11 +25,11 @@ class BravoORM
         self::init();
         return self::$query->select($columns)->limit($limit);
     }
-   
+
     public static function select(array $columns = null, array $tables = null, $orderBy = "id DESC")
     {
         self::init();
-        return self::$query->select($columns,$tables)->orderBy($orderBy)->execute();
+        return self::$query->select($columns, $tables)->orderBy($orderBy)->execute();
     }
 
     public static function create(array $data)
@@ -50,10 +50,16 @@ class BravoORM
         self::$query->delete()->multipleComparisons($where, $strict)->execute();
     }
 
-    public static function find(array $values, bool $strict = true)
+    public static function find(array $values, array $columns = null, array $tables = null, bool $strict = true, $orderBy = "id DESC")
     {
         self::init();
-        return self::$query->find($values, $strict)->execute();
+        return self::$query->find($values, $columns, $tables, $strict)->orderBy($orderBy)->execute();
+    }
+
+    public static function findOrFail(array $values, array $columns = null, array $tables = null, bool $strict = true, $orderBy = "id DESC")
+    {
+        self::init();
+        return self::$query->findOrFail($values, $columns, $tables, $strict)->orderBy($orderBy)->execute();
     }
 
     public static function fill(array $data, int $times)
