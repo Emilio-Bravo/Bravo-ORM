@@ -370,6 +370,7 @@ class Query implements QueryInterface
     public function is_connected()
     {
         if (!$this->connection) return false;
+        return true;
     }
 
     /**
