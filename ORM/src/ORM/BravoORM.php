@@ -50,16 +50,28 @@ class BravoORM
         self::$query->delete()->multipleComparisons($where, $strict)->execute();
     }
 
-    public static function find(array $values, array $columns = null, array $tables = null, bool $strict = true, $orderBy = "id DESC")
+    public static function complexFind(array $values, array $columns = null, array $tables = null, bool $strict = true, $orderBy = "id DESC")
     {
         self::init();
-        return self::$query->find($values, $columns, $tables, $strict)->orderBy($orderBy)->execute();
+        return self::$query->complexFind($values, $columns, $tables, $strict)->orderBy($orderBy)->execute();
     }
 
-    public static function findOrFail(array $values, array $columns = null, array $tables = null, bool $strict = true, $orderBy = "id DESC")
+    public static function complexFindOrFail(array $values, array $columns = null, array $tables = null, bool $strict = true, $orderBy = "id DESC")
     {
         self::init();
-        return self::$query->findOrFail($values, $columns, $tables, $strict)->orderBy($orderBy)->execute();
+        return self::$query->complexFindOrFail($values, $columns, $tables, $strict)->orderBy($orderBy)->execute();
+    }
+
+    public static function find(array $column_and_value, bool $strict)
+    {
+        self::init();
+        return self::$query->find($column_and_value, $strict)->execute();
+    }
+
+    public static function findOrFail(array $column_and_value, bool $strict)
+    {
+        self::init();
+        return self::$query->findOrFail($column_and_value, $strict)->execute();
     }
 
     public static function fill(array $data, int $times)
