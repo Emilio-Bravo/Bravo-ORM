@@ -62,13 +62,13 @@ class BravoORM
         return self::$query->complexFindOrFail($values, $columns, $tables, $strict)->orderBy($orderBy)->execute();
     }
 
-    public static function find(array $column_and_value, bool $strict)
+    public static function find(array $column_and_value, bool $strict = true)
     {
         self::init();
         return self::$query->find($column_and_value, $strict)->execute();
     }
 
-    public static function findOrFail(array $column_and_value, bool $strict)
+    public static function findOrFail(array $column_and_value, bool $strict = true)
     {
         self::init();
         return self::$query->findOrFail($column_and_value, $strict)->execute();
