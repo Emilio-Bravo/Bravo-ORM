@@ -196,9 +196,7 @@ class Query implements QueryInterface
 
     public function multipleComparisons(array $keys_and_values, bool $strict = true)
     {
-        $this->where(key($keys_and_values));
-        $strict ? $this->equal(array_values($keys_and_values)[0]) : $this->beLike(array_values($keys_and_values)[0]);
-        array_shift($keys_and_values);
+        $this->lessThanExpected($keys_and_values, $strict);
         array_map(fn ($key, $value) => $strict ? $this->and($key)->equal($value) : $this->and($key)->beLike($value), array_keys($keys_and_values), $keys_and_values);
         return $this;
     }
@@ -211,9 +209,7 @@ class Query implements QueryInterface
 
     public function multipleCases(array $keys_and_values, bool $strict = true)
     {
-        $this->where(key($keys_and_values));
-        $strict ? $this->equal(array_values($keys_and_values)[0]) : $this->beLike(array_values($keys_and_values)[0]);
-        array_shift($keys_and_values);
+        $this->lessThanExpected($keys_and_values, $strict);
         array_map(fn ($key, $value) => $strict ? $this->or($key)->equal($value) : $this->or($key)->beLike($value), array_keys($keys_and_values), $keys_and_values);
         return $this;
     }
@@ -381,6 +377,19 @@ class Query implements QueryInterface
         return $this;
     }
 
+    /**
+     * Sets the appropiate query in case that the array lenght is less tha expected (2)
+     * @param array $array
+     * @param bool $strict
+     */
+
+    public function lessThanExpected(array &$array, bool $strict)
+    {
+        $this->where(key($array));
+        $strict ? $this->equal(array_values($array)[0]) : $this->beLike(array_values($array)[0]);
+        array_shift($array);
+    }
+    
     /**
      * Performs a query into the databse
      * @return object
