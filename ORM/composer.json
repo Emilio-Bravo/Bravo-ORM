@@ -1,14 +1,15 @@
 {
   "name": "emilio-bravo/bravo-orm",
+  "description": "A simple ORM",
+  "type": "library",
+  "license": "mit",
   "authors": [
     {
       "name": "Emilio Bravo",
       "email": "hsardrake@gmail.com"
     }
   ],
-  "require": {
-    "php": ">=7"
-  },
+  "minimum-stability": "beta",
   "autoload": {
     "classmap": [
       "src/",
