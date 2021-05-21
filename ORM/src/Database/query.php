@@ -261,16 +261,45 @@ class Query implements QueryInterface
     /**
      * Finds one or more register with the especified values
      * @param array $column_value ['name' => 'John', 'email' => 'john@mail.com']
+     * @param array $columns [optional] columns to select
+     * @param array $tables [optional] tables to select
      * @param bool $strict [optional] Wheter the query is strict or not while searching results
      * @return this
      */
 
-    public function find(array $column_value, array $columns = null, array $tables = null, $strict = true)
+    public function complexFind(array $column_value, array $columns = null, array $tables = null, $strict = true)
     {
         $this->select($columns, $tables)->multipleComparisons($column_value, $strict);
         return $this;
     }
 
+    /**
+     * Finds one or more register with the especified values
+     * @param array $column_value ['name' => 'John', 'email' => 'john@mail.com']
+     * @param bool $strict [optional] Wheter the query is strict or not while searching results
+     * @return this
+     */
+
+    public function find(array $column_value, $strict = true)
+    {
+        $this->select()->multipleComparisons($column_value, $strict);
+        return $this;
+    }
+
+    /**
+     * Finds one or more register with the especified values evaluating different cases
+     * @param array $column_value ['name' => 'John', 'email' => 'john@mail.com']
+     * @param array $columns [optional] The columns be to selected
+     * @param array $tables [optional] The tables to be selected
+     * @param bool $strict [optional] Wheter the query is strict or not while searching results
+     * @return this
+     */
+
+    public function complexFindOrFail(array $column_value, array $columns = null, array $tables = null, bool $strict = true)
+    {
+        $this->select($columns, $tables)->multipleCases($column_value, $strict);
+        return $this;
+    }
 
     /**
      * Finds one or more register with the especified values evaluating different cases
@@ -279,9 +308,9 @@ class Query implements QueryInterface
      * @return this
      */
 
-    public function findOrFail(array $column_value, array $columns = null, array $tables = null, bool $strict = true)
+    public function findOrFail(array $column_value, $strict = true)
     {
-        $this->select($columns, $tables)->multipleCases($column_value, $strict);
+        $this->select()->multipleCases($column_value, $strict);
         return $this;
     }
 
