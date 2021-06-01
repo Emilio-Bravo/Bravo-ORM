@@ -2,16 +2,17 @@
 
 namespace Bravo\ORM;
 
-use Bravo\ORM\QueryInterface;
+use Bravo\ORM\supportsCRUD;
 use Bravo\ORM\QueryHandler;
 use Bravo\ORM\inputSanitizer;
+use Bravo\ORM\QueryFormater;
 
 /**
  * This class is in charge of making the queries to the database
  * @author Emilio Bravo
  */
 
-class Query implements QueryInterface
+class Query implements supportsCRUD, logicQuerys
 {
 
     /**
@@ -30,10 +31,6 @@ class Query implements QueryInterface
      * Used to keep the SQL statment that will be used
      */
     protected $query;
-    /**
-     * Determines wether hasPendingQuery method can be used or not
-     */
-    protected $pendingQuery = false;
     /**
      * Result of a PDO (prepare) method
      * This property is used for performing the query
@@ -76,33 +73,33 @@ class Query implements QueryInterface
 
     public function insert(array $values)
     {
-        $this->query = "INSERT INTO $this->table ";
+        $this->add("INSERT INTO $this->table ");
         if ($this->is_assoc($values)) $this->setColumns($values);
         $this->setValues($values);
         return $this;
     }
 
     /**
-     * Sets an UPDATE statement and activates the pendingQuery property
+     * Sets an UPDATE statement
      * @param array $column_value Needs to be an associative array in wich selected columns will bind a value Example: ['name' => 'John']
      */
 
     public function update(array $values)
     {
-        $this->query = "UPDATE $this->table SET ";
+        $this->add("UPDATE $this->table SET ");
         array_map(fn ($key, $value) => $this->bindValues($key, $value), array_keys($values), $values);
         $this->query = inputSanitizer::santizeLastCharacter($this->query);
         return $this;
     }
 
     /**
-     * Sets a DELETE statement and activates the pendingQuery property
+     * Sets a DELETE statement
      * @return this
      */
 
     public function delete()
     {
-        $this->query = "DELETE FROM $this->table";
+        $this->add("DELETE FROM $this->table");
         return $this;
     }
 
@@ -115,9 +112,9 @@ class Query implements QueryInterface
     private function queryExec(array $values = null)
     {
         if (!$this->is_connected())  throw new noConnectionException;
-        $this->stmt = $this->connection->prepare($this->query);
+        $this->stmt = $this->connection->prepare($this->query, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
         $this->stmt->execute($values);
-        return $this->QueryHandler->is_void($this->stmt) ? new statementException :  new DataHandler($this->stmt);
+        return $this->QueryHandler->is_void($this->stmt) ? throw new statementException :  new DataHandler($this->stmt);
     }
 
     /**
@@ -126,51 +123,10 @@ class Query implements QueryInterface
      * @return this
      */
 
-    public function where($value)
+    public function where(array $columns_values, $operator = '=')
     {
-        $this->query .= " WHERE $value";
-        $this->pendingQuery = true;
-        return $this;
-    }
-
-    /**
-     * Adds a LIKE statement to the current query, which must have a WHERE statement beforehand
-     * In case pendientQuery is active, hasPendingQuery method would be called
-     * @param mixed $value Value to be compared
-     * @return this
-     */
-
-    public function like($value)
-    {
-        $this->query .= " LIKE ?";
-        if ($this->pendingQuery)  array_push($this->paramValues, $value);
-        return $this;
-    }
-
-    /**
-     * Adds a LIKE statement to the current query and also adds lower level of stricness in the query, which must have a WHERE statement beforehand
-     * @param mixed $value Value to be compared
-     * @return this
-     */
-
-    public function beLike($value)
-    {
-        $this->query .= " LIKE ?";
-        if ($this->pendingQuery)  array_push($this->paramValues, "%$value%");
-        return $this;
-    }
-
-    /**
-     * Adds a value comparison to the current query, which must have a WHERE statement beforehand
-     * In case pendientQuery is active, hasPendingQuery method would be called
-     * @param mixed $value Value to be compared
-     * @return this
-     */
-
-    public function equal($value)
-    {
-        $this->query .= " = ?";
-        if ($this->pendingQuery)  array_push($this->paramValues, $value);
+        $this->add(" WHERE ");
+        $this->column_value_relation($columns_values, $operator);
         return $this;
     }
 
@@ -183,62 +139,11 @@ class Query implements QueryInterface
 
     public function bindValues($key, $value)
     {
-        $this->query .= " $key = ?,";
-        array_push($this->paramValues, $value);
+        $this->add(" $key = ?,");
+        $this->keepValue($value);
         return $this;
     }
 
-    /**
-     * Allows to have mutliple comparisons to in current query if necesary
-     * @param bool $strict [optional] Wheter the query is strict or not while searching results
-     * @return this
-     */
-
-    public function multipleComparisons(array $keys_and_values, bool $strict = true)
-    {
-        $this->lessThanExpected($keys_and_values, $strict);
-        array_map(fn ($key, $value) => $strict ? $this->and($key)->equal($value) : $this->and($key)->beLike($value), array_keys($keys_and_values), $keys_and_values);
-        return $this;
-    }
-
-    /**
-     * Allows to have mutliple cases comparisons to in current query if necesary
-     * @param bool $strict [optional] Wheter the query is strict or not while searching results
-     * @return this
-     */
-
-    public function multipleCases(array $keys_and_values, bool $strict = true)
-    {
-        $this->lessThanExpected($keys_and_values, $strict);
-        array_map(fn ($key, $value) => $strict ? $this->or($key)->equal($value) : $this->or($key)->beLike($value), array_keys($keys_and_values), $keys_and_values);
-        return $this;
-    }
-
-    /**
-     * Adds an AND statement to the current query, which must have a WHERE statement beforehand
-     * this method will allow to have two or more comparisons depending on how many times it is used in the current query
-     * @param mixed $value Value to be compared
-     * @return this 
-     */
-
-    public function and($value)
-    {
-        $this->query .= " AND $value";
-        return $this;
-    }
-
-    /**
-     * Adds an OR statement to the current query, which must have a WHERE statement beforehand
-     * this method will allow to have two or more different comparisons depending on how many times it is used in the current query
-     * @param mixed $value Value to be compared
-     * @return this 
-     */
-
-    public function or($value)
-    {
-        $this->query .= " OR $value";
-        return $this;
-    }
     /**
      * Adds or performs a SELECT statement to the current query
      * @param array $columns [optional] If provided the statment will apply to the specified columns
@@ -247,56 +152,25 @@ class Query implements QueryInterface
 
     public function select(array $columns = null, array $tables = null)
     {
-        $this->query = "SELECT ";
-        $this->query .= is_array($columns) ? $this->toTarget($columns) : "*";
-        $this->query .= " FROM ";
-        $this->query .= is_array($tables) ? $this->toTarget($tables) : $this->table;
+        $this->add("SELECT ");
+        $this->add(is_array($columns) ? QueryFormater::targetize($columns) : "*");
+        $this->add(" FROM ");
+        $this->add(is_array($tables) ? QueryFormater::targetize($tables) : $this->table);
         return $this;
     }
 
     /**
      * Finds one or more register with the especified values
      * @param array $column_value ['name' => 'John', 'email' => 'john@mail.com']
-     * @param array $columns [optional] columns to select
-     * @param array $tables [optional] tables to select
-     * @param bool $strict [optional] Wheter the query is strict or not while searching results
+     * @param string $operator [optional] The comparison operator to be used
      * @return this
      */
 
-    public function complexFind(array $column_value, array $columns = null, array $tables = null, $strict = true)
+    public function find(array $column_value, $operator = '=')
     {
-        $this->select($columns, $tables)->multipleComparisons($column_value, $strict);
+        $this->select()->where($column_value, $operator);
         return $this;
     }
-
-    /**
-     * Finds one or more register with the especified values
-     * @param array $column_value ['name' => 'John', 'email' => 'john@mail.com']
-     * @param bool $strict [optional] Wheter the query is strict or not while searching results
-     * @return this
-     */
-
-    public function find(array $column_value, $strict = true)
-    {
-        $this->select()->multipleComparisons($column_value, $strict);
-        return $this;
-    }
-
-    /**
-     * Finds one or more register with the especified values evaluating different cases
-     * @param array $column_value ['name' => 'John', 'email' => 'john@mail.com']
-     * @param array $columns [optional] The columns be to selected
-     * @param array $tables [optional] The tables to be selected
-     * @param bool $strict [optional] Wheter the query is strict or not while searching results
-     * @return this
-     */
-
-    public function complexFindOrFail(array $column_value, array $columns = null, array $tables = null, bool $strict = true)
-    {
-        $this->select($columns, $tables)->multipleCases($column_value, $strict);
-        return $this;
-    }
-
     /**
      * Finds one or more register with the especified values evaluating different cases
      * @param array $column_value ['name' => 'John', 'email' => 'john@mail.com']
@@ -304,9 +178,11 @@ class Query implements QueryInterface
      * @return this
      */
 
-    public function findOrFail(array $column_value, $strict = true)
+    public function findOrFail(array $column_value, $operator = '=')
     {
-        $this->select()->multipleCases($column_value, $strict);
+        $this->select();
+        $this->add(" WHERE ");
+        $this->column_value_relation($column_value, $operator, 'OR');
         return $this;
     }
 
@@ -319,7 +195,7 @@ class Query implements QueryInterface
     {
         array_map(fn ($value) => $this->paramValues[] = $value, $values);
         array_map(fn () => $this->BindedParam[] = '?', $this->paramValues);
-        $this->query .= " VALUES" . "(" . $this->toTarget($this->BindedParam) . ")";
+        $this->add(" VALUES" . QueryFormater::parameterize($this->BindedParam));
         return $this;
     }
 
@@ -330,16 +206,8 @@ class Query implements QueryInterface
 
     public function setColumns(array $values)
     {
-        $this->query .= "(" . $this->toTarget(array_keys($values)) . ")";
+        $this->add(QueryFormater::columnize($values));
         return $this;
-    }
-    /**
-     * In case that pendingQuery has been activated (equals to true) this method will execute
-     */
-
-    public function hasPendingQuery()
-    {
-        return $this->queryExec(empty($this->paramValues) ? null : $this->paramValues);
     }
 
     /**
@@ -349,8 +217,7 @@ class Query implements QueryInterface
 
     public function all()
     {
-        if ($this->pendingQuery) return $this->hasPendingQuery();
-        return $this->queryExec($this->paramValues ?? null);
+        return $this->queryExec($this->paramValues);
     }
 
     /**
@@ -360,9 +227,8 @@ class Query implements QueryInterface
 
     public function limit(int $amount)
     {
-        $this->query .= " LIMIT $amount";
-        if ($this->pendingQuery) return $this->hasPendingQuery();
-        return $this->queryExec($this->paramValues ?? null);
+        $this->add(" LIMIT $amount");
+        return $this->queryExec($this->paramValues);
     }
 
     /**
@@ -373,23 +239,10 @@ class Query implements QueryInterface
 
     public function orderBy($order)
     {
-        $this->query .= " ORDER BY $order";
-        return $this;
+        $this->add(" ORDER BY $order");
+        return $this->execute();
     }
 
-    /**
-     * Sets the appropiate query in case that the array lenght is less tha expected (2)
-     * @param array $array
-     * @param bool $strict
-     */
-
-    public function lessThanExpected(array &$array, bool $strict)
-    {
-        $this->where(key($array));
-        $strict ? $this->equal(array_values($array)[0]) : $this->beLike(array_values($array)[0]);
-        array_shift($array);
-    }
-    
     /**
      * Performs a query into the databse
      * @return object
@@ -397,7 +250,7 @@ class Query implements QueryInterface
 
     public function execute()
     {
-        return $this->queryExec(empty($this->paramValues) ? null : $this->paramValues);
+        return $this->queryExec($this->paramValues);
     }
 
     /**
@@ -421,14 +274,22 @@ class Query implements QueryInterface
         return !is_int(key($array));
     }
 
-    /**
-     * Organizes the data to be passed in the statement divided by commas
-     * @param array $values
-     * @return string
-     */
-
-    public function toTarget(array $values)
+    public function keepValue($value)
     {
-        return implode(',', $values);
+        array_push($this->paramValues, $value);
+    }
+
+    public function add(string $str)
+    {
+        $this->query .= $str;
+    }
+
+    public function column_value_relation(array $columns_values, $operator, $comparison_context = 'AND')
+    {
+        foreach ($columns_values as $column => $value) {
+            $this->query .= "$column $operator ? $comparison_context ";
+            $this->keepValue($value);
+        }
+        $this->query = preg_replace("/$comparison_context\z/", '', trim($this->query));
     }
 }
