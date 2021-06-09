@@ -9,7 +9,6 @@
       "email": "hsardrake@gmail.com"
     }
   ],
-  "minimum-stability": "beta",
   "autoload": {
     "classmap": [
       "src/",
