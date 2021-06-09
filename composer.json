@@ -17,7 +17,7 @@
     "psr-4": {
       "Bravo\\ORM\\": "src/",
       "Bravo\\ORM\\ENV\\": "src/env/"
-    },
+    }
   },
    "minimum-stability": "beta"
 }
