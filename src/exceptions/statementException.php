@@ -13,6 +13,6 @@ class statementException extends Exception implements ExceptionInterface
     }
     public function errorMessage()
     {
-        return "statementException: {$this->getMessage()}";
+        return "Statement Exception: {$this->getMessage()}";
     }
 }

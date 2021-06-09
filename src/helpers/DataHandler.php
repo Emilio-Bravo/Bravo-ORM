@@ -6,6 +6,9 @@ use PDO;
 
 class DataHandler
 {
+
+    use countsResults;
+
     private $value;
 
     public function __invoke($value)
@@ -17,16 +20,18 @@ class DataHandler
     {
         $this->value = $value ?? false ?? $value;
     }
-    public function obj()
+    public function obj($find = false)
     {
+        if ($find) return $this->findCase($this->value, \PDO::FETCH_OBJ);
         return $this->value->fetchAll(PDO::FETCH_OBJ);
     }
     public function num()
     {
         return $this->value->fetch(PDO::FETCH_NUM);
     }
-    public function assoc()
+    public function assoc($find = false)
     {
+        if ($find) return $this->findCase($this->value, \PDO::FETCH_ASSOC);
         return $this->value->fetchAll(PDO::FETCH_ASSOC);
     }
     public function count()

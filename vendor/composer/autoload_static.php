@@ -36,11 +36,14 @@ class ComposerStaticInitc0f2a37ca4e253441be05f72c4717e0e
         'Bravo\\ORM\\Query' => __DIR__ . '/../..' . '/src/Database/query.php',
         'Bravo\\ORM\\QueryFormater' => __DIR__ . '/../..' . '/src/helpers/QueryFormater.php',
         'Bravo\\ORM\\QueryHandler' => __DIR__ . '/../..' . '/src/Database/queryHanlder.php',
+        'Bravo\\ORM\\countsResults' => __DIR__ . '/../..' . '/src/traits/countsResultsTrait.php',
+        'Bravo\\ORM\\handlesExceptions' => __DIR__ . '/../..' . '/src/traits/handlesExceptionsTrait.php',
         'Bravo\\ORM\\inputSanitizer' => __DIR__ . '/../..' . '/src/helpers/inputSanitizer.php',
         'Bravo\\ORM\\logicQuerys' => __DIR__ . '/../..' . '/src/interfaces/logicQuerysInterface.php',
         'Bravo\\ORM\\noConnectionException' => __DIR__ . '/../..' . '/src/exceptions/noConnectionException.php',
         'Bravo\\ORM\\statementException' => __DIR__ . '/../..' . '/src/exceptions/statementException.php',
         'Bravo\\ORM\\supportsCRUD' => __DIR__ . '/../..' . '/src/interfaces/supportsCRUDInterface.php',
+        'Bravo\\ORM\\verifyiesData' => __DIR__ . '/../..' . '/src/traits/veryfiesDataTrait.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
     );
 

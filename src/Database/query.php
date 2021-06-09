@@ -2,11 +2,6 @@
 
 namespace Bravo\ORM;
 
-use Bravo\ORM\supportsCRUD;
-use Bravo\ORM\QueryHandler;
-use Bravo\ORM\inputSanitizer;
-use Bravo\ORM\QueryFormater;
-
 /**
  * This class is in charge of making the queries to the database
  * @author Emilio Bravo
@@ -15,35 +10,37 @@ use Bravo\ORM\QueryFormater;
 class Query implements supportsCRUD, logicQuerys
 {
 
+    use verifyiesData, handlesExceptions;
+
     /**
      * Handles the query data
      */
-    protected $QueryHandler;
+    protected QueryHandler $QueryHandler;
     /**
      * Used to keep the parameters to be passed in an statement
      */
-    protected $paramValues = [];
+    protected array $paramValues = [];
     /**
      * Can be used to set the placeholders of an statement
      */
-    protected $BindedParam;
+    protected array $BindedParam;
     /**
      * Used to keep the SQL statment that will be used
      */
-    protected $query;
+    protected ?string $query = null;
     /**
      * Result of a PDO (prepare) method
      * This property is used for performing the query
      */
-    protected $stmt;
+    protected \PDOStatement $stmt;
     /**
      * Represents the database connection
      */
-    protected $connection;
+    protected DB $connection;
     /**
      * The table to be used
      */
-    public $table;
+    public string $table;
 
     /**
      * Performs the databse connection and the class settings
@@ -60,7 +57,7 @@ class Query implements supportsCRUD, logicQuerys
      * @return this
      */
 
-    public function __invoke($table)
+    public function __invoke(string $table): Query
     {
         $this->table = $table;
         return $this;
@@ -71,7 +68,7 @@ class Query implements supportsCRUD, logicQuerys
      * @param array $values Values to insert
      */
 
-    public function insert(array $values)
+    public function insert(array $values): Query
     {
         $this->add("INSERT INTO $this->table ");
         if ($this->is_assoc($values)) $this->setColumns($values);
@@ -84,7 +81,7 @@ class Query implements supportsCRUD, logicQuerys
      * @param array $column_value Needs to be an associative array in wich selected columns will bind a value Example: ['name' => 'John']
      */
 
-    public function update(array $values)
+    public function update(array $values): Query
     {
         $this->add("UPDATE $this->table SET ");
         array_map(fn ($key, $value) => $this->bindValues($key, $value), array_keys($values), $values);
@@ -97,7 +94,7 @@ class Query implements supportsCRUD, logicQuerys
      * @return this
      */
 
-    public function delete()
+    public function delete(): Query
     {
         $this->add("DELETE FROM $this->table");
         return $this;
@@ -106,15 +103,17 @@ class Query implements supportsCRUD, logicQuerys
     /**
      * Prepares and executes a query stored in the query property
      * @param array $values [optional] If provided as an array, the execute statement will pass the array in the query
-     * @return object DataHandler in case of success or an Exception in case of an issue 
+     * @throws noConnectionException In case theres no connection with the database
+     * @throws statementException In case something goes wrong with the statement
+     * @return object DataHandler in case of success 
      */
 
-    private function queryExec(array $values = null)
+    private function queryExec(array $values = null): object
     {
         if (!$this->is_connected())  throw new noConnectionException;
         $this->stmt = $this->connection->prepare($this->query, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
         $this->stmt->execute($values);
-        return $this->QueryHandler->is_void($this->stmt) ? throw new statementException :  new DataHandler($this->stmt);
+        return $this->QueryHandler->is_void($this->stmt) ? throw new statementException : new DataHandler($this->stmt);
     }
 
     /**
@@ -123,7 +122,7 @@ class Query implements supportsCRUD, logicQuerys
      * @return this
      */
 
-    public function where(array $columns_values, $operator = '=')
+    public function where(array $columns_values, $operator = '='): Query
     {
         $this->add(" WHERE ");
         $this->column_value_relation($columns_values, $operator);
@@ -137,7 +136,7 @@ class Query implements supportsCRUD, logicQuerys
      * @return this
      */
 
-    public function bindValues($key, $value)
+    public function bindValues($key, $value): Query
     {
         $this->add(" $key = ?,");
         $this->keepValue($value);
@@ -150,7 +149,7 @@ class Query implements supportsCRUD, logicQuerys
      * @return this
      */
 
-    public function select(array $columns = null, array $tables = null)
+    public function select(array $columns = null, array $tables = null): Query
     {
         $this->add("SELECT ");
         $this->add(is_array($columns) ? QueryFormater::targetize($columns) : "*");
@@ -166,7 +165,7 @@ class Query implements supportsCRUD, logicQuerys
      * @return this
      */
 
-    public function find(array $column_value, $operator = '=')
+    public function find(array $column_value, string $operator = '='): Query
     {
         $this->select()->where($column_value, $operator);
         return $this;
@@ -178,7 +177,7 @@ class Query implements supportsCRUD, logicQuerys
      * @return this
      */
 
-    public function findOrFail(array $column_value, $operator = '=')
+    public function findOrFail(array $column_value, string $operator = '='): Query
     {
         $this->select();
         $this->add(" WHERE ");
@@ -191,7 +190,7 @@ class Query implements supportsCRUD, logicQuerys
      * @return this
      */
 
-    public function setValues(array $values)
+    public function setValues(array $values): Query
     {
         array_map(fn ($value) => $this->paramValues[] = $value, $values);
         array_map(fn () => $this->BindedParam[] = '?', $this->paramValues);
@@ -204,7 +203,7 @@ class Query implements supportsCRUD, logicQuerys
      * @return this
      */
 
-    public function setColumns(array $values)
+    public function setColumns(array $values): Query
     {
         $this->add(QueryFormater::columnize($values));
         return $this;
@@ -215,7 +214,7 @@ class Query implements supportsCRUD, logicQuerys
      * @return object
      */
 
-    public function all()
+    public function all(): object
     {
         return $this->queryExec($this->paramValues);
     }
@@ -225,10 +224,10 @@ class Query implements supportsCRUD, logicQuerys
      * @return object
      */
 
-    public function limit(int $amount)
+    public function limit(int $amount): Query
     {
         $this->add(" LIMIT $amount");
-        return $this->queryExec($this->paramValues);
+        return $this;
     }
 
     /**
@@ -237,57 +236,56 @@ class Query implements supportsCRUD, logicQuerys
      * @return this
      */
 
-    public function orderBy($order)
+    public function orderBy(string $order): Query
     {
         $this->add(" ORDER BY $order");
-        return $this->execute();
+        return $this;
     }
 
     /**
-     * Performs a query into the databse
+     * Performs the final query into the databse
      * @return object
      */
 
-    public function execute()
+    public function execute(): object
     {
-        return $this->queryExec($this->paramValues);
+        try {
+            return $this->queryExec($this->paramValues);
+        } catch (\Bravo\ORM\statementException $e) {
+            $this->debug($e->errorMessage());
+        }
     }
 
     /**
-     * Verifies if a valid database connection exists
-     * @return bool
+     * Keeps a value that will be pased while executing the statement
+     * @param string $value
      */
 
-    public function is_connected()
-    {
-        if (!$this->connection) return false;
-        return true;
-    }
-
-    /**
-     * Deternmines wether an array key is associative or not
-     * @return bool
-     */
-
-    public function is_assoc(array $array)
-    {
-        return !is_int(key($array));
-    }
-
-    public function keepValue($value)
+    public function keepValue($value): void
     {
         array_push($this->paramValues, $value);
     }
 
-    public function add(string $str)
+    /**
+     * Adds a string to the current query
+     * @param string $str
+     */
+
+    public function add(string $str): void
     {
         $this->query .= $str;
     }
 
-    public function column_value_relation(array $columns_values, $operator, $comparison_context = 'AND')
+    /**
+     * Binds a columns width a value
+     * @param string $operator The comparison operator to be used
+     * @param string $comparison_context What to add in case of more than 1 comparison
+     */
+
+    public function column_value_relation(array $columns_values, $operator, $comparison_context = 'AND'): void
     {
         foreach ($columns_values as $column => $value) {
-            $this->query .= "$column $operator ? $comparison_context ";
+            $this->add("$column $operator ? $comparison_context ");
             $this->keepValue($value);
         }
         $this->query = preg_replace("/$comparison_context\z/", '', trim($this->query));

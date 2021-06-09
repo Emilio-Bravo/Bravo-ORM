@@ -3,7 +3,6 @@
 namespace Bravo\ORM;
 
 use PDO;
-use PDOException;
 use Bravo\ORM\ENV\DatabseEnv;
 
 /**
@@ -48,12 +47,12 @@ class DB extends PDO
      * @return void
      */
 
-    private function setUp()
+    private function setUp(): void
     {
         try {
             $this->setErrMode();
             $this->setDriver();
-        } catch (PDOException $e) {
+        } catch (\PDOException $e) {
             $e->getMessage();
         }
     }
@@ -62,15 +61,15 @@ class DB extends PDO
      * Sets the database driver
      */
 
-    public function setDriver()
+    public function setDriver(): ?\PDO
     {
         switch ($this->driver) {
             case 'psql' || 'postgres':
-                return parent::__construct($this->postgreSqlConnection());
+                return parent::__construct($this->postgreSqlConnection(), $this->user, $this->password, $this->errorMode);
             case 'mysql':
                 return parent::__construct($this->mysqlConnection(), $this->user, $this->password, $this->errorMode);
             case 'sqlite':
-                return parent::__construct($this->sqliteConnection(), $this->errorMode);
+                return parent::__construct($this->sqliteConnection());
         }
     }
     /**
@@ -78,7 +77,7 @@ class DB extends PDO
      * @return void
      */
 
-    public function setErrMode()
+    public function setErrMode(): void
     {
         switch ($this->errorMode) {
             case 'exception':
@@ -98,9 +97,9 @@ class DB extends PDO
      * @return mixed
      */
 
-    protected function postgreSqlConnection()
+    protected function postgreSqlConnection(): string
     {
-        return "$this->driver:host=$this->server;dbname=$this->db;port=$this->port;charset=$this->charset;user=$this->user;password=$this->password";
+        return "$this->driver:host=$this->server;dbname=$this->db;port=$this->port;charset=$this->charset";
     }
 
     /**
@@ -108,7 +107,7 @@ class DB extends PDO
      * @return mixed
      */
 
-    protected function mysqlConnection()
+    protected function mysqlConnection(): string
     {
         return "$this->driver:host=$this->server;dbname=$this->db;charset=$this->charset";
     }
@@ -118,7 +117,7 @@ class DB extends PDO
      * @return mixed
      */
 
-    protected function sqliteConnection()
+    protected function sqliteConnection(): string
     {
         return "$this->driver:$this->sqlitePath";
     }

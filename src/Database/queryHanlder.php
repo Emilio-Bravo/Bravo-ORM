@@ -8,7 +8,7 @@ namespace Bravo\ORM;
 
 class QueryHandler
 {
-    public function is_void($query)
+    public function is_void($query): bool
     {
         return is_bool($query);
     }

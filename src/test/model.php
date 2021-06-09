@@ -12,5 +12,5 @@ class Model
 {
     use BravoORM;
 
-    protected static $table = 'users'; //your table
+    protected static string $table = 'users'; //your table
 }
