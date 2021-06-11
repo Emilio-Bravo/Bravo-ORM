@@ -21,7 +21,6 @@ trait countsResults
 
     public function findCase(\PDOStatement $stmt, int $fetch_type)
     {
-        if ($this->areMany($stmt)) return $this->handleMany($stmt, $fetch_type);
-        return $this->handleOne($stmt, $fetch_type);
+        return $this->areMany($stmt) ? $this->handleMany($stmt, $fetch_type) : $this->handleOne($stmt, $fetch_type);
     }
 }
