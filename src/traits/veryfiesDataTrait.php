@@ -11,8 +11,7 @@ trait verifyiesData
 
     public function is_connected(): bool
     {
-        if ($this->connection instanceof \PDOException) return false;
-        return true;
+        return $this->connection instanceof \PDO;
     }
 
     /**
