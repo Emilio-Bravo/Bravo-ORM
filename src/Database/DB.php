@@ -13,6 +13,8 @@ use Bravo\ORM\ENV\DatabseEnv;
 class DB extends PDO
 {
 
+    use handlesExceptions;
+
     private $driver;
     private $server;
     private $port;
@@ -53,7 +55,7 @@ class DB extends PDO
             $this->setErrMode();
             $this->setDriver();
         } catch (\PDOException $e) {
-            $e->getMessage();
+            $this->debug($e->getMessage());
         }
     }
 

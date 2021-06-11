@@ -12,5 +12,5 @@ class DatabseEnv
     public const DATABASE_PORT = '';
     public const SQLITE_PATH = '';
     public const DATABASE_CHARSET = 'utf8mb4';
-    public const DATABASE_ERROR_HANDLING = 'slient';
+    public const DATABASE_ERROR_HANDLING = 'exception';
 }

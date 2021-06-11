@@ -23,7 +23,7 @@ class DataHandler
     public function obj($find = false)
     {
         if ($find) return $this->findCase($this->value, \PDO::FETCH_OBJ);
-        return $this->value->fetchAll(PDO::FETCH_OBJ);
+        return $this->handleMany($this->value);
     }
     public function num()
     {
@@ -32,7 +32,7 @@ class DataHandler
     public function assoc($find = false)
     {
         if ($find) return $this->findCase($this->value, \PDO::FETCH_ASSOC);
-        return $this->value->fetchAll(PDO::FETCH_ASSOC);
+        return $this->handleMany($this->value, \PDO::FETCH_ASSOC);
     }
     public function count()
     {

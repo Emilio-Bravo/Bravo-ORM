@@ -253,6 +253,10 @@ class Query implements supportsCRUD, logicQuerys
             return $this->queryExec($this->paramValues);
         } catch (\Bravo\ORM\statementException $e) {
             $this->debug($e->errorMessage());
+        } catch (\Bravo\ORM\noConnectionException $e) {
+            $this->debug($e->errorMessage());
+        } catch (\PDOException $e) {
+            $this->debug($e->getMessage());
         }
     }
 

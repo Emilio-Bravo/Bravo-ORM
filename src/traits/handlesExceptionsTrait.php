@@ -9,6 +9,6 @@ trait handlesExceptions
      */
     public function debug(string $message): void
     {
-        echo PHP_EOL . '<br><pre>' . htmlspecialchars($message) . '</pre>';
+        exit(PHP_EOL . '<br><pre>' . htmlspecialchars($message) . '</pre>');
     }
 }

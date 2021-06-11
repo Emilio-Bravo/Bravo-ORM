@@ -6,7 +6,7 @@ trait countsResults
 {
     public function handleMany(\PDOStatement $stmt, int $fetch_type = \PDO::FETCH_OBJ): array
     {
-        return $stmt->fetchAll($fetch_type);
+        return (array) $stmt->fetchAll($fetch_type);
     }
 
     public function areMany(\PDOStatement $stmt): bool
