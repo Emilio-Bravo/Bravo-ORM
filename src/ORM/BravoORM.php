@@ -78,7 +78,13 @@ trait BravoORM
         self::init();
         return self::$query->findOrFail($columns_values, $operator)->execute()->obj(true);
     }
-
+    
+     public static function findAllOrFail(array $columns_values, $operator = '=')
+     {
+        self::init();
+        return self::$query->findOrFail($columns_values, $operator)->execute()->obj();
+     }
+    
     public static function orderBy($key = 'id', $order = 'asc', $limit = 10)
     {
         self::init();
