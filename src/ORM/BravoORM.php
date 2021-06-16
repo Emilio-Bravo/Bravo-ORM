@@ -66,25 +66,25 @@ trait BravoORM
         self::init();
         return self::$query->find($columns_values, $operator)->execute()->obj(true);
     }
-    
-     public static function findAll(array $columns_values, $operator = '=')
-     {
+
+    public static function findAll(array $columns_values, $operator = '=')
+    {
         self::init();
         return self::$query->find($columns_values, $operator)->execute()->obj();
-     }
-    
+    }
+
     public static function findOrFail(array $columns_values, $operator = '=')
     {
         self::init();
         return self::$query->findOrFail($columns_values, $operator)->execute()->obj(true);
     }
-    
-     public static function findAllOrFail(array $columns_values, $operator = '=')
-     {
+
+    public static function findAllOrFail(array $columns_values, $operator = '=')
+    {
         self::init();
         return self::$query->findOrFail($columns_values, $operator)->execute()->obj();
-     }
-    
+    }
+
     public static function orderBy($key = 'id', $order = 'asc', $limit = 10)
     {
         self::init();
