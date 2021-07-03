@@ -13,8 +13,6 @@ use Bravo\ORM\ENV\DatabseEnv;
 class DB extends PDO
 {
 
-    use handlesExceptions;
-
     private $driver;
     private $server;
     private $port;
@@ -27,7 +25,7 @@ class DB extends PDO
 
     /** 
      * Sets the database enviroment
-     * @return void
+     * @return null|PDO
      */
 
     public function __construct()
@@ -41,21 +39,21 @@ class DB extends PDO
         $this->db = DatabseEnv::DATABASE_NAME;
         $this->charset = DatabseEnv::DATABASE_CHARSET;
         $this->errorMode = DatabseEnv::DATABASE_ERROR_HANDLING;
-        $this->setUp();
+        return $this->setUp();
     }
 
     /**
      * Sets the database 
-     * @return void
+     * @return null|PDO
      */
 
-    private function setUp(): void
+    private function setUp(): ?\PDO
     {
         try {
             $this->setErrMode();
-            $this->setDriver();
+            return $this->setDriver();
         } catch (\PDOException $e) {
-            $this->debug($e->getMessage());
+            $e->getMessage();
         }
     }
 
