@@ -6,6 +6,8 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Bravo\\ORM\\ENV\\' => array($baseDir . '/src/env'),
-    'Bravo\\ORM\\' => array($baseDir . '/src'),
+    'Core\\' => array($baseDir . '/core'),
+    'Bravo\\ORM\\ENV\\' => array($vendorDir . '/emilio-bravo/bravo-orm/src/env'),
+    'Bravo\\ORM\\' => array($vendorDir . '/emilio-bravo/bravo-orm/src'),
+    'App\\' => array($baseDir . '/app'),
 );

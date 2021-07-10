@@ -4,55 +4,117 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitc0f2a37ca4e253441be05f72c4717e0e
+class ComposerStaticInit8690bab61c5c73dbf30b1f5c2a28e2cb
 {
     public static $prefixLengthsPsr4 = array (
+        'C' => 
+        array (
+            'Core\\' => 5,
+        ),
         'B' => 
         array (
             'Bravo\\ORM\\ENV\\' => 14,
             'Bravo\\ORM\\' => 10,
         ),
+        'A' => 
+        array (
+            'App\\' => 4,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'Core\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/core',
+        ),
         'Bravo\\ORM\\ENV\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/src/env',
+            0 => __DIR__ . '/..' . '/emilio-bravo/bravo-orm/src/env',
         ),
         'Bravo\\ORM\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/src',
+            0 => __DIR__ . '/..' . '/emilio-bravo/bravo-orm/src',
+        ),
+        'App\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/app',
         ),
     );
 
     public static $classMap = array (
-        'Bravo\\ORM\\BravoORM' => __DIR__ . '/../..' . '/src/ORM/BravoORM.php',
-        'Bravo\\ORM\\DB' => __DIR__ . '/../..' . '/src/Database/DB.php',
-        'Bravo\\ORM\\DataHandler' => __DIR__ . '/../..' . '/src/helpers/DataHandler.php',
-        'Bravo\\ORM\\DataNotFoundException' => __DIR__ . '/../..' . '/src/exceptions/dataNotFoundException.php',
-        'Bravo\\ORM\\ENV\\DatabseEnv' => __DIR__ . '/../..' . '/src/env/DatabaseEnv.php',
-        'Bravo\\ORM\\ExceptionInterface' => __DIR__ . '/../..' . '/src/interfaces/ExceptionInterface.php',
-        'Bravo\\ORM\\Model' => __DIR__ . '/../..' . '/src/test/model.php',
-        'Bravo\\ORM\\Query' => __DIR__ . '/../..' . '/src/Database/query.php',
-        'Bravo\\ORM\\QueryFormater' => __DIR__ . '/../..' . '/src/helpers/QueryFormater.php',
-        'Bravo\\ORM\\QueryHandler' => __DIR__ . '/../..' . '/src/Database/queryHanlder.php',
-        'Bravo\\ORM\\countsResults' => __DIR__ . '/../..' . '/src/traits/countsResultsTrait.php',
-        'Bravo\\ORM\\handlesExceptions' => __DIR__ . '/../..' . '/src/traits/handlesExceptionsTrait.php',
-        'Bravo\\ORM\\inputSanitizer' => __DIR__ . '/../..' . '/src/helpers/inputSanitizer.php',
-        'Bravo\\ORM\\logicQuerys' => __DIR__ . '/../..' . '/src/interfaces/logicQuerysInterface.php',
-        'Bravo\\ORM\\noConnectionException' => __DIR__ . '/../..' . '/src/exceptions/noConnectionException.php',
-        'Bravo\\ORM\\statementException' => __DIR__ . '/../..' . '/src/exceptions/statementException.php',
-        'Bravo\\ORM\\supportsCRUD' => __DIR__ . '/../..' . '/src/interfaces/supportsCRUDInterface.php',
-        'Bravo\\ORM\\verifyiesData' => __DIR__ . '/../..' . '/src/traits/veryfiesDataTrait.php',
+        'App\\Controllers\\ImageController' => __DIR__ . '/../..' . '/app/controllers/ImageController.php',
+        'App\\Controllers\\ProductController' => __DIR__ . '/../..' . '/app/controllers/ProductController.php',
+        'App\\Controllers\\UserController' => __DIR__ . '/../..' . '/app/controllers/UserController.php',
+        'App\\Models\\Product' => __DIR__ . '/../..' . '/app/models/Product.php',
+        'App\\Models\\User' => __DIR__ . '/../..' . '/app/models/User.php',
+        'Bravo\\ORM\\BravoORM' => __DIR__ . '/..' . '/emilio-bravo/bravo-orm/src/ORM/BravoORM.php',
+        'Bravo\\ORM\\DB' => __DIR__ . '/..' . '/emilio-bravo/bravo-orm/src/Database/DB.php',
+        'Bravo\\ORM\\DataHandler' => __DIR__ . '/..' . '/emilio-bravo/bravo-orm/src/helpers/DataHandler.php',
+        'Bravo\\ORM\\DataNotFoundException' => __DIR__ . '/..' . '/emilio-bravo/bravo-orm/src/exceptions/dataNotFoundException.php',
+        'Bravo\\ORM\\ENV\\DatabseEnv' => __DIR__ . '/..' . '/emilio-bravo/bravo-orm/src/env/DatabaseEnv.php',
+        'Bravo\\ORM\\ExceptionInterface' => __DIR__ . '/..' . '/emilio-bravo/bravo-orm/src/interfaces/ExceptionInterface.php',
+        'Bravo\\ORM\\Model' => __DIR__ . '/..' . '/emilio-bravo/bravo-orm/src/test/model.php',
+        'Bravo\\ORM\\Query' => __DIR__ . '/..' . '/emilio-bravo/bravo-orm/src/Database/query.php',
+        'Bravo\\ORM\\QueryFormater' => __DIR__ . '/..' . '/emilio-bravo/bravo-orm/src/helpers/QueryFormater.php',
+        'Bravo\\ORM\\QueryHandler' => __DIR__ . '/..' . '/emilio-bravo/bravo-orm/src/Database/queryHanlder.php',
+        'Bravo\\ORM\\countsResults' => __DIR__ . '/..' . '/emilio-bravo/bravo-orm/src/traits/countsResultsTrait.php',
+        'Bravo\\ORM\\handlesExceptions' => __DIR__ . '/..' . '/emilio-bravo/bravo-orm/src/traits/handlesExceptionsTrait.php',
+        'Bravo\\ORM\\inputSanitizer' => __DIR__ . '/..' . '/emilio-bravo/bravo-orm/src/helpers/inputSanitizer.php',
+        'Bravo\\ORM\\logicQuerys' => __DIR__ . '/..' . '/emilio-bravo/bravo-orm/src/interfaces/logicQuerysInterface.php',
+        'Bravo\\ORM\\noConnectionException' => __DIR__ . '/..' . '/emilio-bravo/bravo-orm/src/exceptions/noConnectionException.php',
+        'Bravo\\ORM\\statementException' => __DIR__ . '/..' . '/emilio-bravo/bravo-orm/src/exceptions/statementException.php',
+        'Bravo\\ORM\\supportsCRUD' => __DIR__ . '/..' . '/emilio-bravo/bravo-orm/src/interfaces/supportsCRUDInterface.php',
+        'Bravo\\ORM\\verifyiesData' => __DIR__ . '/..' . '/emilio-bravo/bravo-orm/src/traits/veryfiesDataTrait.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'Core\\Client\\Authentification\\Auth' => __DIR__ . '/../..' . '/core/client/auth/Auth.php',
+        'Core\\Client\\Authentification\\AuthenticatesUsers' => __DIR__ . '/../..' . '/core/client/auth/AuthenticatesUsersTrait.php',
+        'Core\\Client\\Authentification\\createsUsers' => __DIR__ . '/../..' . '/core/client/auth/createsUsersTrait.php',
+        'Core\\Client\\Authentification\\guestsNotAllowed' => __DIR__ . '/../..' . '/core/client/auth/guestsNotAllowed.php',
+        'Core\\Client\\View' => __DIR__ . '/../..' . '/core/client/View.php',
+        'Core\\Client\\ViewHelper' => __DIR__ . '/../..' . '/core/client/ViewHelper.php',
+        'Core\\Config\\Support\\interactsWithAuthConfig' => __DIR__ . '/../..' . '/core/config/support/interactsWithAuthConfigTrait.php',
+        'Core\\Config\\Support\\interactsWithPathSettings' => __DIR__ . '/../..' . '/core/config/support/interactsWithPathSettingsTrait.php',
+        'Core\\Config\\Support\\interactsWithValidatorConfig' => __DIR__ . '/../..' . '/core/config/support/interactsWithValidatorConfigTrait.php',
+        'Core\\Config\\Support\\interactsWithViewDependencies' => __DIR__ . '/../..' . '/core/config/support/interactsWithViewDependenciesTrait.php',
+        'Core\\FileSystems\\Storage' => __DIR__ . '/../..' . '/core/FileSystems/Storage.php',
+        'Core\\Foundation\\Controller' => __DIR__ . '/../..' . '/core/Foundation/Controller.php',
+        'Core\\Foundation\\Model' => __DIR__ . '/../..' . '/core/Foundation/Model.php',
+        'Core\\Foundation\\Traits\\Http\\Renderable' => __DIR__ . '/../..' . '/core/Foundation/traits/http/RenderableTrait.php',
+        'Core\\Foundation\\Traits\\Http\\canMorphContent' => __DIR__ . '/../..' . '/core/Foundation/traits/http/canMorphContent.php',
+        'Core\\Foundation\\Traits\\Http\\httpResponses' => __DIR__ . '/../..' . '/core/Foundation/traits/http/httpResponses.php',
+        'Core\\Foundation\\Traits\\Http\\responseMessages' => __DIR__ . '/../..' . '/core/Foundation/traits/http/responseMessagesTrait.php',
+        'Core\\Http\\Complements\\BaseCookie' => __DIR__ . '/../..' . '/core/HTTP/complements/BaseCookie.php',
+        'Core\\Http\\Complements\\StoredFile' => __DIR__ . '/../..' . '/core/HTTP/complements/StoredFile.php',
+        'Core\\Http\\Cookie' => __DIR__ . '/../..' . '/core/HTTP/Cookie.php',
+        'Core\\Http\\Files' => __DIR__ . '/../..' . '/core/HTTP/Files.php',
+        'Core\\Http\\Persistent' => __DIR__ . '/../..' . '/core/HTTP/Persistent.php',
+        'Core\\Http\\Request' => __DIR__ . '/../..' . '/core/HTTP/Request.php',
+        'Core\\Http\\RequestComplements\\UploadedFile' => __DIR__ . '/../..' . '/core/HTTP/requestComplements/UploadedFile.php',
+        'Core\\Http\\RequestComplements\\handlesRequestHeaders' => __DIR__ . '/../..' . '/core/HTTP/requestComplements/handlesRequestHeadersTrait.php',
+        'Core\\Http\\Response' => __DIR__ . '/../..' . '/core/HTTP/Response.php',
+        'Core\\Http\\ResponseComplements\\HeaderBag' => __DIR__ . '/../..' . '/core/HTTP/responseComplements/headerBag.php',
+        'Core\\Http\\ResponseComplements\\redirectResponse' => __DIR__ . '/../..' . '/core/HTTP/responseComplements/redirectResponse.php',
+        'Core\\Http\\Router' => __DIR__ . '/../..' . '/core/HTTP/Router.php',
+        'Core\\Http\\Server' => __DIR__ . '/../..' . '/core/HTTP/Server.php',
+        'Core\\Http\\Traits\\Renderable' => __DIR__ . '/../..' . '/core/Foundation/traits/RenderableTrait.php',
+        'Core\\Support\\Crypto' => __DIR__ . '/../..' . '/core/support/Crypto.php',
+        'Core\\Support\\Files\\HandlesImages' => __DIR__ . '/../..' . '/core/support/Files/handlesImages.php',
+        'Core\\Support\\Files\\HandlesRequestFiles' => __DIR__ . '/../..' . '/core/support/Files/handlesRequestFiles.php',
+        'Core\\Support\\Files\\handlesUploadedFiles' => __DIR__ . '/../..' . '/core/support/Files/handlesUploadedFilesTrait.php',
+        'Core\\Support\\Flash' => __DIR__ . '/../..' . '/core/support/Flash.php',
+        'Core\\Support\\Formating\\Carbon' => __DIR__ . '/../..' . '/core/support/formating/Carbon.php',
+        'Core\\Support\\Formating\\MsgParser' => __DIR__ . '/../..' . '/core/support/formating/MsgParser.php',
+        'Core\\Support\\Formating\\Str' => __DIR__ . '/../..' . '/core/support/formating/Str.php',
+        'Core\\Support\\HttpSanitizer' => __DIR__ . '/../..' . '/core/support/HttpSanitizer.php',
+        'Core\\Support\\Validator' => __DIR__ . '/../..' . '/core/support/Validator.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitc0f2a37ca4e253441be05f72c4717e0e::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitc0f2a37ca4e253441be05f72c4717e0e::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitc0f2a37ca4e253441be05f72c4717e0e::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit8690bab61c5c73dbf30b1f5c2a28e2cb::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit8690bab61c5c73dbf30b1f5c2a28e2cb::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit8690bab61c5c73dbf30b1f5c2a28e2cb::$classMap;
 
         }, null, ClassLoader::class);
     }

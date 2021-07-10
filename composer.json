@@ -1,8 +1,7 @@
 {
-  "name": "emilio-bravo/bravo-orm",
-  "description": "A simple ORM",
-  "type": "library",
-  "license": "mit",
+  "name": "chawi/chawi-framework",
+  "description": "An MVC PHP framework",
+  "type": "framework",
   "authors": [
     {
       "name": "Emilio Bravo",
@@ -10,14 +9,17 @@
     }
   ],
   "autoload": {
-    "classmap": [
-      "src/",
-      "src/env/"
-    ],
     "psr-4": {
-      "Bravo\\ORM\\": "src/",
-      "Bravo\\ORM\\ENV\\": "src/env/"
-    }
+      "App\\": "app/",
+      "Core\\": "core/"
+    },
+    "classmap": [
+      "app/",
+      "core/"
+    ]
   },
-   "minimum-stability": "dev"
+  "minimum-stability": "dev",
+  "require": {
+    "emilio-bravo/bravo-orm": "*"
+  }
 }
