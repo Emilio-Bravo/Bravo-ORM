@@ -1,57 +1,20 @@
 {
-  "_readme": [
-    "This file locks the dependencies of your project to a known state",
-    "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
-    "This file is @generated automatically"
-  ],
-  "content-hash": "cbf265d26954e7fbddac04b333616f75",
-  "packages": [
-    {
-      "name": "emilio-bravo/bravo-orm",
-      "version": "dev-main",
-      "source": {
-        "type": "git",
-        "url": "https://github.com/Emilio-Bravo/Bravo-ORM.git",
-        "reference": "2ad8d1e1927ab60cdf304bf8d31950e077d7b693"
-      },
-      "dist": {
-        "type": "zip",
-        "url": "https://api.github.com/repos/Emilio-Bravo/Bravo-ORM/zipball/2ad8d1e1927ab60cdf304bf8d31950e077d7b693",
-        "reference": "2ad8d1e1927ab60cdf304bf8d31950e077d7b693",
-        "shasum": ""
-      },
-      "default-branch": true,
-      "type": "library",
-      "autoload": {
-        "classmap": ["src/", "src/env/"],
-        "psr-4": {
-          "Bravo\\ORM\\": "src/",
-          "Bravo\\ORM\\ENV\\": "src/env/"
-        }
-      },
-      "notification-url": "https://packagist.org/downloads/",
-      "license": ["mit"],
-      "authors": [
-        {
-          "name": "Emilio Bravo",
-          "email": "hsardrake@gmail.com"
-        }
-      ],
-      "description": "A simple ORM",
-      "support": {
-        "issues": "https://github.com/Emilio-Bravo/Bravo-ORM/issues",
-        "source": "https://github.com/Emilio-Bravo/Bravo-ORM/tree/main"
-      },
-      "time": "2021-06-09T18:46:42+00:00"
-    }
-  ],
-  "packages-dev": [],
-  "aliases": [],
-  "minimum-stability": "dev",
-  "stability-flags": [],
-  "prefer-stable": false,
-  "prefer-lowest": false,
-  "platform": [],
-  "platform-dev": [],
-  "plugin-api-version": "2.0.0"
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "ad4517a41389a2847b549b1a0ae8a813",
+    "packages": [],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=7"
+    },
+    "platform-dev": [],
+    "plugin-api-version": "2.0.0"
 }
