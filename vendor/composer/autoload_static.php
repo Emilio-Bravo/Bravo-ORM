@@ -36,7 +36,6 @@ class ComposerStaticInitc0f2a37ca4e253441be05f72c4717e0e
         'Bravo\\ORM\\ORM' => __DIR__ . '/../..' . '/src/ORM/ORM.php',
         'Bravo\\ORM\\Query' => __DIR__ . '/../..' . '/src/Database/Query.php',
         'Bravo\\ORM\\QueryFormater' => __DIR__ . '/../..' . '/src/helpers/QueryFormater.php',
-        'Bravo\\ORM\\QueryHandler' => __DIR__ . '/../..' . '/src/Database/QueryHandler.php',
         'Bravo\\ORM\\countsResults' => __DIR__ . '/../..' . '/src/traits/countsResultsTrait.php',
         'Bravo\\ORM\\handlesExceptions' => __DIR__ . '/../..' . '/src/traits/handlesExceptionsTrait.php',
         'Bravo\\ORM\\inputSanitizer' => __DIR__ . '/../..' . '/src/helpers/inputSanitizer.php',

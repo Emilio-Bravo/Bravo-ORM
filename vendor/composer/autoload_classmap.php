@@ -16,7 +16,6 @@ return array(
     'Bravo\\ORM\\ORM' => $baseDir . '/src/ORM/ORM.php',
     'Bravo\\ORM\\Query' => $baseDir . '/src/Database/Query.php',
     'Bravo\\ORM\\QueryFormater' => $baseDir . '/src/helpers/QueryFormater.php',
-    'Bravo\\ORM\\QueryHandler' => $baseDir . '/src/Database/QueryHandler.php',
     'Bravo\\ORM\\countsResults' => $baseDir . '/src/traits/countsResultsTrait.php',
     'Bravo\\ORM\\handlesExceptions' => $baseDir . '/src/traits/handlesExceptionsTrait.php',
     'Bravo\\ORM\\inputSanitizer' => $baseDir . '/src/helpers/inputSanitizer.php',
