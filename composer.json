@@ -19,5 +19,6 @@
       "Bravo\\ORM\\ENV\\": "src/env/"
     }
   },
-   "minimum-stability": "dev"
+   "minimum-stability": "dev",
+  "version": "1.0"
 }
